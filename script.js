@@ -1,236 +1,227 @@
 // -------------------- GLOBAL VARIABLES --------------------
+let currentProducts = [];
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-const API_BASE = "https://grocery-backend.onrender.com/api";
-const BACKEND_URL = "https://grocery-backend.onrender.com"; // Live backend URL
-let currentProducts = []; // store backend products for search/filter/sort
-const container = document.getElementById("products-container");
-const cartContainer = document.getElementById("cart-container");
-// ------------------ LOAD PRODUCTS ------------------
-async function loadProductsFromBackend() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/products`);
-    const products = await res.json();
-    currentProducts = products; // save for search/filter/sort
-    loadProducts(products);
-  } catch (err) {
-    console.error("Failed to load products:", err);
+const BACKEND_URL = "https://grocery-backend.onrender.com"; // Live backend or fake API
+
+// -------------------- DOMContentLoaded --------------------
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("products-container");
+  const cartContainer = document.getElementById("cart-container");
+
+  // -------------------- Load Products --------------------
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${BACKEND_URL}/products`);
+      currentProducts = await res.json();
+      displayProducts(currentProducts);
+    } catch (err) {
+      console.error("Failed to load products:", err);
+      container.innerHTML = "<p>Failed to load products. Try again later.</p>";
+    }
   }
-}
 
-function loadProducts(list) {
-  const container = document.getElementById("productList");
-  container.innerHTML = "";
-  list.forEach(p => {
-    const card = document.createElement("div");
-    card.classList.add("product");
-    card.setAttribute("data-category", p.category);
-    card.innerHTML = `
-      <img src="${p.img}" alt="${p.name}">
-      <h3>${p.name}</h3>
-      <p>₹${p.price}</p>
-      <button onclick="addToCart('${p.name}', ${p.price}, '${p.img}')">Add to Cart</button>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// ------------------ ADD TO CART ------------------
-function addToCart(name, price, img){
-  const existing = cart.find(i => i.name === name);
-  if(existing) existing.quantity++;
-  else cart.push({name, price, img, quantity:1});
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
-  alert(`${name} added to cart!`);
-}
-
-// ------------------ RENDER CART ------------------
-function renderCart(){
-  const cartContainer = document.getElementById('cart-items');
-  if(!cartContainer) return;
-  cartContainer.innerHTML = '';
-  if(cart.length === 0){ cartContainer.innerHTML='<p>Your cart is empty.</p>'; return; }
-
-  cart.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className='cart-item';
-    div.innerHTML = `
-      <img src="${item.img}" width="60">
-      <div>
-        <h4>${item.name}</h4>
-        <p>₹${item.price}</p>
-        <div class="qty">
-          <button onclick="changeQty(${idx}, -1)">-</button>
-          <span>${item.quantity}</span>
-          <button onclick="changeQty(${idx}, 1)">+</button>
+  // -------------------- Display Products --------------------
+  function displayProducts(list) {
+    if (!container) return;
+    container.innerHTML = "";
+    list.forEach((p, idx) => {
+      container.innerHTML += `
+        <div class="product-card">
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <p>₹${p.price}</p>
+          <button class="add-to-cart-btn" data-idx="${idx}">Add to Cart</button>
         </div>
-      </div>
-    `;
-    cartContainer.appendChild(div);
+      `;
+    });
+  }
+
+  // -------------------- Add to Cart --------------------
+  container.addEventListener("click", (e) => {
+    if (e.target.classList.contains("add-to-cart-btn")) {
+      const idx = e.target.dataset.idx;
+      const p = currentProducts[idx];
+      const existing = cart.find(i => i.name === p.name);
+      if (existing) existing.quantity++;
+      else cart.push({ ...p, quantity: 1 });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+      alert(`${p.name} added to cart!`);
+    }
   });
 
-  const total = cart.reduce((sum,i)=>sum + i.price*i.quantity,0);
-  const totalDiv = document.createElement('p');
-  totalDiv.textContent = `Total: ₹${total}`;
-  cartContainer.appendChild(totalDiv);
-
-  const checkoutBtn = document.createElement('button');
-  checkoutBtn.textContent = 'Checkout';
-  checkoutBtn.onclick = handleCheckout;
-  cartContainer.appendChild(checkoutBtn);
-}
-
-function changeQty(idx, delta){
-  cart[idx].quantity += delta;
-  if(cart[idx].quantity <= 0) cart.splice(idx,1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
-}
-
-// ------------------ SEARCH ------------------
-function searchProducts(){
-  const query = document.getElementById('searchBar').value.toLowerCase();
-  const filtered = currentProducts.filter(p => p.name.toLowerCase().includes(query));
-  loadProducts(filtered);
-}
-
-// ------------------ FILTER ------------------
-function filterProducts(){
-  const category = document.getElementById('categoryFilter').value;
-  const filtered = category==='all' ? currentProducts : currentProducts.filter(p=>p.category===category);
-  loadProducts(filtered);
-}
-
-// ------------------ SORT ------------------
-function sortProducts(){
-  const sortBy = document.getElementById('priceSort').value;
-  let sorted = [...currentProducts];
-
-  if(sortBy==='low') sorted.sort((a,b)=>a.price-b.price);
-  else if(sortBy==='high') sorted.sort((a,b)=>b.price-a.price);
-
-  // Apply category filter if selected
-  const category = document.getElementById('categoryFilter').value;
-  if(category!=='all') sorted = sorted.filter(p=>p.category===category);
-
-  loadProducts(sorted);
-}
-
-// ------------------ LOGIN ------------------
-async function handleLogin() {
-  const username = document.getElementById('username')?.value;
-  const password = document.getElementById('password')?.value;
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    if(data.success){
-      localStorage.setItem('loggedUser', username);
-      alert("Login successful!");
-      window.location.href = 'index.html';
-    } else {
-      alert("Invalid username or password!");
+  // -------------------- Render Cart --------------------
+  function renderCart() {
+    if (!cartContainer) return;
+    cartContainer.innerHTML = "";
+    if (cart.length === 0) {
+      cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+      return;
     }
-  } catch(err){
-    console.error("Login failed:", err);
-    alert("Server error during login.");
-  }
-}
 
-// ------------------ CHECKOUT ------------------
-async function handleCheckout() {
-  if(cart.length === 0){ alert("Cart is empty!"); return; }
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/checkout`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart })
+    cart.forEach((item, idx) => {
+      cartContainer.innerHTML += `
+        <div class="cart-item">
+          <img src="${item.img}" width="60">
+          <div>
+            <h4>${item.name}</h4>
+            <p>₹${item.price}</p>
+            <div class="qty">
+              <button class="change-qty" data-idx="${idx}" data-delta="-1">-</button>
+              <span>${item.quantity}</span>
+              <button class="change-qty" data-idx="${idx}" data-delta="1">+</button>
+            </div>
+            <button class="remove-item" data-idx="${idx}">Remove</button>
+          </div>
+        </div>
+      `;
     });
-    const data = await res.json();
-    if(data.success){
-      alert(`Order placed! Order ID: ${data.orderId}`);
-      cart = [];
-      localStorage.removeItem('cart');
-      renderCart();
-      window.location.href = 'thankyou.html';
-    } else {
-      alert("Checkout failed!");
-    }
-  } catch(err){
-    console.error("Checkout failed:", err);
-    alert("Server error during checkout.");
-  }
-}
-fetch("https://grocery-backend.onrender.com/products")
 
-// ------------------ INITIALIZE ------------------
-document.addEventListener('DOMContentLoaded',()=>{
-  loadProductsFromBackend();
-  renderCart();
-// ---------------- SIGNUP ----------------
-async function signup() {
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    cartContainer.innerHTML += `<p>Total: ₹${total}</p>`;
+    cartContainer.innerHTML += `<button id="checkout-btn">Checkout</button>`;
+
+    // Cart buttons
+    document.querySelectorAll(".change-qty").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.dataset.idx;
+        const delta = parseInt(btn.dataset.delta);
+        cart[idx].quantity += delta;
+        if (cart[idx].quantity <= 0) cart.splice(idx, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+      });
+    });
+
+    document.querySelectorAll(".remove-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.dataset.idx;
+        cart.splice(idx, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+      });
+    });
+
+    // Checkout button
+    const checkoutBtn = document.getElementById("checkout-btn");
+    if (checkoutBtn) checkoutBtn.addEventListener("click", checkout);
+  }
+
+  // -------------------- Search / Filter / Sort --------------------
+  const searchInput = document.getElementById("search");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const filtered = currentProducts.filter(p => p.name.toLowerCase().includes(searchInput.value.toLowerCase()));
+      displayProducts(filtered);
+    });
+  }
+
+  const categoryFilter = document.getElementById("category-filter");
+  if (categoryFilter) {
+    categoryFilter.addEventListener("change", () => {
+      const filtered = categoryFilter.value === "all" ? currentProducts : currentProducts.filter(p => p.category === categoryFilter.value);
+      displayProducts(filtered);
+    });
+  }
+
+  const sortSelect = document.getElementById("sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", () => {
+      const sorted = [...currentProducts].sort((a, b) => sortSelect.value === "asc" ? a.price - b.price : b.price - a.price);
+      displayProducts(sorted);
+    });
+  }
+
+  // -------------------- Login --------------------
+  window.handleLogin = async function () {
+    const username = document.getElementById('username')?.value;
+    const password = document.getElementById('password')?.value;
+    try {
+      const res = await fetch(`${BACKEND_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('loggedUser', username);
+        alert("Login successful!");
+        window.location.href = 'index.html';
+      } else alert("Invalid username or password!");
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("Server error during login.");
+    }
+  };
+
+  // -------------------- Signup --------------------
+  window.signup = async function () {
     const username = document.getElementById("signup-username").value;
     const password = document.getElementById("signup-password").value;
-
-    const res = await fetch(`${API_BASE}/signup`, {
+    try {
+      const res = await fetch(`${BACKEND_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    alert(data.message);
-}
+      });
+      const data = await res.json();
+      alert(data.message);
+    } catch (err) {
+      console.error("Signup failed:", err);
+      alert("Server error during signup.");
+    }
+  };
 
-// ---------------- CHECKOUT ----------------
-async function checkout() {
-    const phoneNumber = document.getElementById("phone-number").value;
+  // -------------------- Checkout --------------------
+  async function checkout() {
+    const phoneNumber = document.getElementById("phone-number")?.value;
     if (!phoneNumber || cart.length === 0) {
-        alert("Add items to cart and enter phone number");
-        return;
+      alert("Add items to cart and enter phone number");
+      return;
     }
 
-    // Create order
-    const orderRes = await fetch(`${API_BASE}/order`, {
+    try {
+      // Create order
+      const orderRes = await fetch(`${BACKEND_URL}/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cart, phoneNumber })
-    });
-    const orderData = await orderRes.json();
-    alert(orderData.message);
+      });
+      const orderData = await orderRes.json();
+      if (!orderData.success) { alert("Order creation failed!"); return; }
 
-    // Simulate Payment
-    const paymentRes = await fetch(`${API_BASE.replace("/api", "")}/createPayment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: orderData.orderId, amount: cart.reduce((a,b)=>a+b.price*b.qty,0), phoneNumber })
-    });
-    const paymentData = await paymentRes.json();
-    alert(`Payment status: ${paymentData.status}`);
-// Clear cart
-    cart = [];
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-}
+      // Simulate PhonePe / UPI link
+      const amount = cart.reduce((a, b) => a + b.price * b.quantity, 0);
+      const upiLink = `upi://pay?pa=merchant-vpa@upi&pn=GroceryStore&tr=${orderData.orderId}&tn=Order+Payment&am=${amount}&cu=INR`;
+      window.location.href = upiLink;
 
-// ---------------- INITIALIZE ----------------
-loadProducts();
-renderCart();
-  const user = localStorage.getItem('loggedUser');
-  if(user){
-    const userDiv = document.createElement('div');
-    userDiv.id='loggedUser';
-    userDiv.innerHTML=`Welcome, ${user} <button id="logoutBtn">Logout</button>`;
-    document.body.prepend(userDiv);
-    document.getElementById('logoutBtn').onclick=()=>{ 
-      localStorage.removeItem('loggedUser'); 
-      window.location.href='login.html';
-    };
-  } else if(window.location.pathname.includes('index.html')){
-    window.location.href='login.html';
+      // After payment
+      cart = [];
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+      // window.location.href='thankyou.html'; // redirect after real payment
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      alert("Error during checkout.");
+    }
   }
+
+  // -------------------- Logged User Display --------------------
+  const user = localStorage.getItem('loggedUser');
+  if (user) {
+    const userDiv = document.createElement('div');
+    userDiv.id = 'loggedUser';
+    userDiv.innerHTML = `Welcome, ${user} <button id="logoutBtn">Logout</button>`;
+    document.body.prepend(userDiv);
+    document.getElementById('logoutBtn').onclick = () => {
+      localStorage.removeItem('loggedUser');
+      window.location.href = 'login.html';
+    };
+  } else if (window.location.pathname.includes('index.html')) {
+    window.location.href = 'login.html';
+  }
+
+  // -------------------- Initialize --------------------
+  await loadProducts();
+  renderCart();
 });
