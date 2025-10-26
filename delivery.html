@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Order - Manasa Provisions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="delivery-container">
+    <h2>Place Your Order</h2>
+    <p>Thank you for shopping with Manasa Provisions 💚</p>
+    <div id="orderSummary"></div>
+    <p>Your order will be delivered soon!</p>
+    <a href="index.html"><button>Back to Home</button></a>
+  </div>
+
+  <script>
+    const lastOrder = JSON.parse(localStorage.getItem("lastOrder")) || [];
+    const summaryDiv = document.getElementById("orderSummary");
+
+    if (lastOrder.length > 0) {
+      let total = 0;
+      summaryDiv.innerHTML = "<h3>Order Summary:</h3>";
+      lastOrder.forEach(item => {
+        const qty = item.quantity || 1;
+        const itemTotal = item.price * qty;
+        total += itemTotal;
+        summaryDiv.innerHTML += `<p>${item.name} x ${qty} = ₹${itemTotal}</p>`;
+      });
+      summaryDiv.innerHTML += `<p><strong>Total: ₹${total}</strong></p>`;
+    } else {
+      summaryDiv.innerHTML = "<p>No items in the order.</p>";
+    }
+
+    // Clear lastOrder after showing
+    localStorage.removeItem("lastOrder");
+  </script>
+</body>
+</html>

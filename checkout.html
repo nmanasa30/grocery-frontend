@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - Manasa Provisions 🛒</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>🛒 Manasa Provisions</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart 🛍️</a>
+    </nav>
+  </header>
+
+  <!-- Checkout Section -->
+  <section id="checkout">
+    <h2>Checkout</h2>
+
+    <!-- Cart Summary -->
+    <div id="cartSummary"></div>
+
+    <!-- Checkout Form -->
+    <form id="checkoutForm">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
+
+      <label for="address">Address:</label>
+      <textarea id="address" rows="3" required></textarea>
+
+      <label for="payment">Payment Method:</label>
+      <select id="payment" required>
+        <option value="cod">Cash on Delivery</option>
+        <option value="upi">UPI / Netbanking</option>
+        <option value="card">Debit / Credit Card</option>
+      </select>
+
+      <button type="submit">Place Order</button>
+    </form>
+
+    <!-- PhonePe Button (Initially Hidden) -->
+    <button id="phonepe-pay" style="display:none; margin-top:20px;">Pay with PhonePe</button>
+
+    <!-- Thank You Message -->
+    <div id="thankYou" style="display:none; margin-top:20px;">
+      <h3>Thank you for your order! 🎉</h3>
+      <p>Your order has been placed successfully.</p>
+      <a href="index.html"><button>Back to Home</button></a>
+    </div>
+  </section>
+
+  <script src="checkout.js"></script>
+</body>
+</html>

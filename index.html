@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manasa Provisions 🛍️</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+   
+
+
+  <!-- Header -->
+  <header>
+    <h1>🛒 Manasa Provisions</h1>
+    <input type="text" id="searchBar" placeholder="Search products..." onkeyup="searchProducts()">
+    <nav>
+      <a href="index.html">Home</a>
+
+      <a href="cart.html">Cart 🛍️</a>
+
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <!-- Filters & Sorting -->
+
+  <div class="filters">
+    <select id="categoryFilter" onchange="filterProducts()">
+      <option value="all">All Categories</option>
+      <option value="grains">Grains</option>
+      <option value="vegetables">Vegetables</option>
+      <option value="snacks">Snacks</option>
+      <option value="dairy">Dairy</option>
+    </select>
+
+    <select id="priceSort" onchange="sortProducts()">
+      <option value="default">Sort by Price</option>
+      <option value="low">Low → High</option>
+      <option value="high">High → Low</option>
+    </select>
+  </div>
+
+  <!-- Products Section -->
+<section id="products">
+  <h2>Available Products</h2>
+  <div class="product-list" id="productList">
+
+    <!-- Grains -->
+    <div class="product" data-category="grains">
+      <img src="images/rice.jpeg" alt="Rice">
+      <h3>Rice (1kg)</h3>
+      <p>₹60</p>
+      <button onclick="addToCart('Rice', 60)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="grains">
+      <img src="images/cone.webp" alt="Corn Flour">
+      <h3>Corn Flour (1kg)</h3>
+      <p>₹50</p>
+      <button onclick="addToCart('Corn Flour', 50)">Add to Cart</button>
+    </div>
+    
+    <div class="product" data-category="grains">
+      <img src="images/freedom oil.webp" alt="Freedom Oil">
+      <h3>Freedom Oil (1 Lit)</h3>
+      <p>₹90</p>
+      <button onclick="addToCart('Freedom Oil', 90)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="grains">
+      <img src="images/green.webp" alt="Green Gram">
+      <h3>Green Gram (1kg)</h3>
+      <p>₹68</p>
+      <button onclick="addToCart('Green Gram', 68)">Add to Cart</button>
+    </div>
+   
+    <div class="product" data-category="grains">
+      <img src="images/red.webp" alt="Red Gram">
+      <h3>Red Gram (1kg)</h3>
+      <p>₹88</p>
+      <button onclick="addToCart('Red Gram', 88)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="grains">
+      <img src="images/mida.webp" alt="Maida Flour">
+      <h3>Maida Flour (1kg)</h3>
+      <p>₹50</p>
+      <button onclick="addToCart('Maida Flour', 50)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="grains">
+      <img src="images/wheat.webp" alt="wheat Flour">
+      <h3>Wheat Flour (1kg)</h3>
+      <p>₹55</p>
+      <button onclick="addToCart('Wheat Flour', 55)">Add to Cart</button>
+    </div>
+    
+
+    <div class="product" data-category="grains">
+      <img src="images/sugar.jpeg" alt="Sugar">
+      <h3>Sugar (1kg)</h3>
+      <p>₹55</p>
+      <button onclick="addToCart('Sugar', 55)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="grains">
+      <img src="images/oil.jpeg" alt="Sunflower Oil">
+      <h3>Sunflower Oil (1L)</h3>
+      <p>₹160</p>
+      <button onclick="addToCart('Sunflower Oil', 160)">Add to Cart</button>
+    </div>
+
+    <!-- Vegetables -->
+    <div class="product" data-category="vegetables">
+      <img src="images/tamoto.jpeg" alt="Tomato">
+      <h3>Tomato (1kg)</h3>
+      <p>₹40</p>
+      <button onclick="addToCart('Tomato', 40)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="vegetables">
+      <img src="images/onion.jpeg" alt="Onions">
+      <h3>Onions (1kg)</h3>
+      <p>₹40</p>
+      <button onclick="addToCart('Onions', 40)">Add to Cart</button>
+    </div>
+   
+  
+
+    <!-- Snacks -->
+    <div class="product" data-category="snacks">
+      <img src="images/lays.jpeg" alt="Lays Chips">
+      <h3>Lays Chips</h3>
+      <p>₹20</p>
+      <button onclick="addToCart('Lays Chips', 20)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/mixture.jpeg" alt="Andhra Mixture">
+      <h3>Andhra Mixture (500g)</h3>
+      <p>₹70</p>
+      <button onclick="addToCart('Andhra Mixture', 70)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/cake.webp" alt="Cake">
+      <h3>Cake </h3>
+      <p>₹40</p>
+      <button onclick="addToCart('Cake', 40)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/dark.webp" alt="Dark Fantasy">
+      <h3>Dark Fantasy</h3>
+      <p>₹90</p>
+      <button onclick="addToCart('Dark Fantasy', 90)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/fuse.webp" alt="Fuse">
+      <h3>Fuse</h3>
+      <p>₹20</p>
+      <button onclick="addToCart('Fuse', 20)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/jimjam.webp" alt="JimJam">
+      <h3>JimJam</h3>
+      <p>₹10</p>
+      <button onclick="addToCart('JimJam', 10)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="snacks">
+      <img src="images/kitkat.webp" alt="kitkat">
+      <h3>kitkat</h3>
+      <p>₹40</p>
+      <button onclick="addToCart('kitkat', 40)">Add to Cart</button>
+    </div>
+      
+    <div class="product" data-category="snacks">
+      <img src="images/kurkkure.webp" alt="kurkure">
+      <h3>kurkure</h3>
+      <p>₹30</p>
+      <button onclick="addToCart('kurkure', 30)">Add to Cart</button>
+    </div>
+     
+    <div class="product" data-category="snacks">
+      <img src="images/orea.webp" alt="Orea">
+      <h3>Orea</h3>
+      <p>₹50</p>
+      <button onclick="addToCart('Orea', 50)">Add to Cart</button>
+    </div>
+    
+    <div class="product" data-category="snacks">
+      <img src="images/snikers.webp" alt="snikers">
+      <h3>snikers</h3>
+      <p>₹20</p>
+      <button onclick="addToCart('snikers', 20)">Add to Cart</button>
+    </div>
+
+
+    <div class="product" data-category="snacks">
+      <img src="images/maggi.jpeg" alt="Maggi">
+      <h3>Maggi Noodles</h3>
+      <p>₹15</p>
+      <button onclick="addToCart('Maggi Noodles', 15)">Add to Cart</button>
+    </div>
+
+    <!-- Dairy -->
+    <div class="product" data-category="dairy">
+      <img src="images/milk.jpeg" alt="Milk">
+      <h3>Milk (1L)</h3>
+      <p>₹50</p>
+      <button onclick="addToCart('Milk', 50)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="dairy">
+      <img src="images/goodday.jpeg" alt="Good Day Biscuits">
+      <h3>Good Day Biscuits</h3>
+      <p>₹30</p>
+      <button onclick="addToCart('Biscuits', 30)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="dairy">
+      <img src="images/dairymilk.jpeg" alt="Dairy Milk Chocolate">
+      <h3>Dairy Milk Chocolate</h3>
+      <p>₹40</p>
+      <button onclick="addToCart('Chocolate', 40)">Add to Cart</button>
+    </div>
+
+    <div class="product" data-category="dairy">
+      <img src="images/cookies.jpeg" alt="Butter Cookies">
+      <h3>Butter Cookies</h3>
+      <p>₹50</p>
+      <button onclick="addToCart('Butter Cookies', 50)">Add to Cart</button>
+    </div>
+  </div>
+</section>
+ 
+
+  
+
+<!-- FOOTER -->
+  <footer>
+    <p>© 2025 Manasa Provisions | All Rights Reserved</p>
+  </footer>
+
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>
