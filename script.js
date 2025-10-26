@@ -1,8 +1,10 @@
 // -------------------- GLOBAL VARIABLES --------------------
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+const API_BASE = "https://grocery-backend.onrender.com/api";
 const BACKEND_URL = "https://grocery-backend.onrender.com"; // Live backend URL
 let currentProducts = []; // store backend products for search/filter/sort
-
+const container = document.getElementById("products-container");
+const cartContainer = document.getElementById("cart-container");
 // ------------------ LOAD PRODUCTS ------------------
 async function loadProductsFromBackend() {
   try {
@@ -164,12 +166,60 @@ async function handleCheckout() {
     alert("Server error during checkout.");
   }
 }
+fetch("https://grocery-backend.onrender.com/products")
 
 // ------------------ INITIALIZE ------------------
 document.addEventListener('DOMContentLoaded',()=>{
   loadProductsFromBackend();
   renderCart();
+// ---------------- SIGNUP ----------------
+async function signup() {
+    const username = document.getElementById("signup-username").value;
+    const password = document.getElementById("signup-password").value;
 
+    const res = await fetch(`${API_BASE}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    alert(data.message);
+}
+
+// ---------------- CHECKOUT ----------------
+async function checkout() {
+    const phoneNumber = document.getElementById("phone-number").value;
+    if (!phoneNumber || cart.length === 0) {
+        alert("Add items to cart and enter phone number");
+        return;
+    }
+
+    // Create order
+    const orderRes = await fetch(`${API_BASE}/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart, phoneNumber })
+    });
+    const orderData = await orderRes.json();
+    alert(orderData.message);
+
+    // Simulate Payment
+    const paymentRes = await fetch(`${API_BASE.replace("/api", "")}/createPayment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: orderData.orderId, amount: cart.reduce((a,b)=>a+b.price*b.qty,0), phoneNumber })
+    });
+    const paymentData = await paymentRes.json();
+    alert(`Payment status: ${paymentData.status}`);
+// Clear cart
+    cart = [];
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+}
+
+// ---------------- INITIALIZE ----------------
+loadProducts();
+renderCart();
   const user = localStorage.getItem('loggedUser');
   if(user){
     const userDiv = document.createElement('div');
