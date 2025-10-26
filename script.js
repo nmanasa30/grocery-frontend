@@ -1,12 +1,14 @@
 // -------------------- GLOBAL VARIABLES --------------------
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 const BACKEND_URL = "https://grocery-backend.onrender.com"; // Live backend URL
+let currentProducts = []; // store backend products for search/filter/sort
 
 // ------------------ LOAD PRODUCTS ------------------
 async function loadProductsFromBackend() {
   try {
     const res = await fetch(`${BACKEND_URL}/products`);
     const products = await res.json();
+    currentProducts = products; // save for search/filter/sort
     loadProducts(products);
   } catch (err) {
     console.error("Failed to load products:", err);
@@ -81,6 +83,35 @@ function changeQty(idx, delta){
   if(cart[idx].quantity <= 0) cart.splice(idx,1);
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
+}
+
+// ------------------ SEARCH ------------------
+function searchProducts(){
+  const query = document.getElementById('searchBar').value.toLowerCase();
+  const filtered = currentProducts.filter(p => p.name.toLowerCase().includes(query));
+  loadProducts(filtered);
+}
+
+// ------------------ FILTER ------------------
+function filterProducts(){
+  const category = document.getElementById('categoryFilter').value;
+  const filtered = category==='all' ? currentProducts : currentProducts.filter(p=>p.category===category);
+  loadProducts(filtered);
+}
+
+// ------------------ SORT ------------------
+function sortProducts(){
+  const sortBy = document.getElementById('priceSort').value;
+  let sorted = [...currentProducts];
+
+  if(sortBy==='low') sorted.sort((a,b)=>a.price-b.price);
+  else if(sortBy==='high') sorted.sort((a,b)=>b.price-a.price);
+
+  // Apply category filter if selected
+  const category = document.getElementById('categoryFilter').value;
+  if(category!=='all') sorted = sorted.filter(p=>p.category===category);
+
+  loadProducts(sorted);
 }
 
 // ------------------ LOGIN ------------------
