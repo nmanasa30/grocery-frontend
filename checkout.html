@@ -27,9 +27,7 @@
       text-align: center;
       color: #333;
     }
-  
 
-  
     #cartSummary img {
       width: 60px;
       height: 60px;
@@ -99,26 +97,29 @@
   <div class="checkout-container">
     <h1>Checkout</h1>
 
-    <!-- Cart Summary -->
+    <!-- ✅ Keep only one cart summary div -->
     <div id="cartSummary"></div>
 
     <!-- Checkout Form -->
     <form id="checkoutForm">
-      <input type="text" id="name" placeholder="Enter your full name" required />
-      <input type="tel" id="phone" placeholder="Enter your phone number" required />
-      <input type="text" id="Address" placeholder="Address" required />
-
-      <div style="text-align:center; margin-top:20px;">
-        <button type="submit">Place Order 🛒</button>
-        <button type="button" id="phonepe-pay" class="btn-secondary">Pay with PhonePe 📱</button>
-      </div>
+      <input id="name" placeholder="Enter your name" required>
+      <input id="phone" placeholder="Enter phone number" required>
+      <button type="submit">Place Order</button>
     </form>
 
     <!-- Thank You Message -->
-    <div id="thankYou">🎉 Thank you for shopping with Manasa Grocery! 🛍️</div>
+    <div id="thankYou">
+      <h3>🎉 Thank you! Your order has been placed successfully.</h3>
+    </div>
+
+    <!-- PhonePe Payment Button -->
+    <button id="phonepe-pay" class="btn-secondary">Pay with PhonePe</button>
   </div>
-<script src="store.js"></script>
-  <script src="script.js"></script>
+
+  <!-- ✅ Load only checkout.js for this page -->
   <script src="checkout.js"></script>
+  <script src="store.js"></script>
+  <script src="script.js"></script>
+  
 </body>
 </html>
