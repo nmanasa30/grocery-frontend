@@ -67,6 +67,11 @@ let products = []; // fetched from backend
     checkoutForm.style.display = "none";
     thankYouDiv.style.display = "block";
   });
+   // Redirect after 3 seconds
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 3000);
+
 
   // ------------------ PHONEPE PAYMENT SIMULATION ------------------
   if (phonepeBtn) {
@@ -94,7 +99,11 @@ let products = []; // fetched from backend
         loadCartSummary();
         checkoutForm.style.display = "none";
         thankYouDiv.style.display = "block";
-      }, 2000);
-    });
-  }
+      // Auto redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 3000);
+    }, 2000);
+  });
+}
 
