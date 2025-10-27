@@ -96,7 +96,6 @@
     user-select: none;
   }
 
-  /* Popup styling */
   #popup {
     position: fixed;
     top: 20px;
@@ -126,8 +125,7 @@
       <label for="remember">Remember me</label>
     </div>
 
-    <!-- FIXED: added type="button" -->
-    <button id="login-btn" type="button">Login</button>
+    <button id="login-btn">Login</button>
   </form>
   <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
 </div>
@@ -136,6 +134,7 @@
 
 <script>
 const popup = document.getElementById("popup");
+const BACKEND_URL = "https://grocery-backend.onrender.com";
 
 function showPopup(msg){
   popup.innerText = msg;
@@ -162,24 +161,39 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Login logic
-document.getElementById("login-btn").addEventListener("click", () => {
+document.getElementById("login-btn").addEventListener("click", (e) => {
+  e.preventDefault();
   const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
+  const password = document.getElementById("password").value.trim();
   const remember = document.getElementById("remember").checked;
 
-  if(username === "manasan" && password === "123456"){
-    if(remember){
-      localStorage.setItem("rememberedUser", username);
-    } else {
-      localStorage.removeItem("rememberedUser");
-    }
-
-    localStorage.setItem("loggedUser", username);
-    showPopup("✅ Login successful!");
-    setTimeout(()=> window.location.href = "index.html", 1500);
-  } else {
-    showPopup("❌ Invalid username or password!");
+  if(!username || !password){
+    showPopup("Please fill all fields!");
+    return;
   }
+
+  fetch(`${BACKEND_URL}/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === "success"){
+      if(remember) localStorage.setItem("rememberedUser", username);
+      else localStorage.removeItem("rememberedUser");
+
+      localStorage.setItem("loggedUser", username);
+      showPopup("Login successful!");
+      setTimeout(()=> window.location.href = "index.html", 1000);
+    } else {
+      showPopup(data.message || "Invalid credentials!");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showPopup("Server error. Try again!");
+  });
 });
 </script>
 
