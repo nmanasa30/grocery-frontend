@@ -1,61 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout - Manasa Provisions 🛒</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Manasa Provisions 🛍️</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+    header { background: #4caf50; color: white; padding: 15px; text-align: center; }
+    header nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
+    .checkout-container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .checkout-item { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+    .checkout-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 10px; }
+    #cartSummary { margin-bottom: 20px; }
+    #checkoutForm input { display: block; width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    #checkoutForm button { padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; margin-right: 10px; }
+    #thankYou { display: none; text-align: center; font-size: 20px; color: green; margin-top: 20px; }
+  </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1>🛒 Manasa Provisions</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="cart.html">Cart 🛍️</a>
-    </nav>
-  </header>
+<header>
+  <h1>🛍️ Manasa Provisions</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+  </nav>
+</header>
 
-  <!-- Checkout Section -->
-  <section id="checkout">
-    <h2>Checkout</h2>
+<section class="checkout-container">
+  <h2>Checkout</h2>
 
-    <!-- Cart Summary -->
-    <div id="cartSummary"></div>
+  <div id="cartSummary"></div>
 
-    <!-- Checkout Form -->
-    <form id="checkoutForm">
-      <label for="name">Full Name:</label>
-      <input type="text" id="name" required>
+  <form id="checkoutForm">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <button type="submit">Place Order</button>
+    <button type="button" id="phonepe-pay">Pay with PhonePe 📱</button>
+  </form>
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" required>
-
-      <label for="address">Address:</label>
-      <textarea id="address" rows="3" required></textarea>
-
-      <label for="payment">Payment Method:</label>
-      <select id="payment" required>
-        <option value="cod">Cash on Delivery</option>
-        <option value="upi">UPI / Netbanking</option>
-        <option value="card">Debit / Credit Card</option>
-      </select>
-
-      <button type="submit">Place Order</button>
-    </form>
-
-    <!-- PhonePe Button (Initially Hidden) -->
-    <button id="phonepe-pay" style="display:none; margin-top:20px;">Pay with PhonePe</button>
-
-    <!-- Thank You Message -->
-    <div id="thankYou" style="display:none; margin-top:20px;">
-      <h3>Thank you for your order! 🎉</h3>
-      <p>Your order has been placed successfully.</p>
-      <a href="index.html"><button>Back to Home</button></a>
-    </div>
-  </section>
+  <div id="thankYou">🎉 Thank you! Your order has been placed successfully.</div>
+</section>
 <script src="store.js"></script>
-  <script src="checkout.js"></script>
+
+<script src="checkout.js"></script>
 </body>
 </html>

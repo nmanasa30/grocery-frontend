@@ -1,227 +1,202 @@
-// -------------------- GLOBAL VARIABLES --------------------
-let currentProducts = [];
+
+// -------------------- CENTRAL DATA --------------------
+const currentProducts = [
+  {name:"Rice (1kg)", price:60, category:"grains", img:"images/rice.jpeg"},
+  {name:"Corn Flour (1kg)", price:50, category:"grains", img:"images/cone.webp"},
+  {name:"Freedom Oil (1L)", price:90, category:"grains", img:"images/freedom oil.webp"},
+  {name:"Green Gram (1kg)", price:68, category:"grains", img:"images/green.webp"},
+  {name:"Red Gram (1kg)", price:88, category:"grains", img:"images/red.webp"},
+  {name:"Maida Flour (1kg)", price:50, category:"grains", img:"images/mida.webp"},
+  {name:"Wheat Flour (1kg)", price:55, category:"grains", img:"images/wheat.webp"},
+  {name:"Sugar (1kg)", price:55, category:"grains", img:"images/sugar.jpeg"},
+  {name:"Sunflower Oil (1L)", price:160, category:"grains", img:"images/oil.jpeg"},
+  {name:"Tomato (1kg)", price:40, category:"vegetables", img:"images/tamoto.jpeg"},
+  {name:"Onions (1kg)", price:40, category:"vegetables", img:"images/onion.jpeg"},
+  {name:"Lays Chips", price:20, category:"snacks", img:"images/lays.jpeg"},
+  {name:"Andhra Mixture (500g)", price:70, category:"snacks", img:"images/mixture.jpeg"},
+  {name:"Cake", price:40, category:"snacks", img:"images/cake.webp"},
+  {name:"Dark Fantasy", price:90, category:"snacks", img:"images/dark.webp"},
+  {name:"Fuse", price:20, category:"snacks", img:"images/fuse.webp"},
+  {name:"JimJam", price:10, category:"snacks", img:"images/jimjam.webp"},
+  {name:"Kitkat", price:40, category:"snacks", img:"images/kitkat.webp"},
+  {name:"Kurkure", price:30, category:"snacks", img:"images/kurkkure.webp"},
+  {name:"Oreo", price:50, category:"snacks", img:"images/orea.webp"},
+  {name:"Snickers", price:20, category:"snacks", img:"images/snikers.webp"},
+  {name:"Maggi Noodles", price:15, category:"snacks", img:"images/maggi.jpeg"},
+  {name:"Milk (1L)", price:50, category:"dairy", img:"images/milk.jpeg"},
+  {name:"Good Day Biscuits", price:30, category:"dairy", img:"images/goodday.jpeg"},
+  {name:"Dairy Milk Chocolate", price:40, category:"dairy", img:"images/dairymilk.jpeg"},
+  {name:"Butter Cookies", price:50, category:"dairy", img:"images/cookies.jpeg"}
+];
+
+// cart stored as array of {name, price, img, quantity}
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-const BACKEND_URL = "https://grocery-backend.onrender.com"; // Live backend or fake API
 
-// -------------------- DOMContentLoaded --------------------
-document.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("products-container");
-  const cartContainer = document.getElementById("cart-container");
+// ---------- Helpers ----------
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+  console.log("Cart saved:", cart);
+}
 
-  // -------------------- Load Products --------------------
-  async function loadProducts() {
-    try {
-      const res = await fetch(`${BACKEND_URL}/products`);
-      currentProducts = await res.json();
-      displayProducts(currentProducts);
-    } catch (err) {
-      console.error("Failed to load products:", err);
-      container.innerHTML = "<p>Failed to load products. Try again later.</p>";
-    }
+// Universal addToCart (can be called from inline attributes or buttons)
+window.addToCart = function(indexOrName, priceOrUndefined, imgOrUndefined) {
+  // Accept either (index) or (name, price, img)
+  let product;
+  if (typeof indexOrName === "number") {
+    product = currentProducts[indexOrName];
+    if (!product) { alert("Product not found"); return; }
+  } else {
+    product = { name: indexOrName, price: priceOrUndefined || 0, img: imgOrUndefined || 'images/default.png' };
   }
 
-  // -------------------- Display Products --------------------
-  function displayProducts(list) {
-    if (!container) return;
-    container.innerHTML = "";
-    list.forEach((p, idx) => {
-      container.innerHTML += `
-        <div class="product-card">
-          <img src="${p.img}" alt="${p.name}" />
-          <h3>${p.name}</h3>
-          <p>₹${p.price}</p>
-          <button class="add-to-cart-btn" data-idx="${idx}">Add to Cart</button>
-        </div>
-      `;
-    });
-  }
+  const existing = cart.find(item => item.name === product.name);
+  if (existing) existing.quantity++;
+  else cart.push({ name: product.name, price: product.price, img: product.img || 'images/default.png', quantity: 1 });
 
-  // -------------------- Add to Cart --------------------
-  container.addEventListener("click", (e) => {
-    if (e.target.classList.contains("add-to-cart-btn")) {
-      const idx = e.target.dataset.idx;
-      const p = currentProducts[idx];
-      const existing = cart.find(i => i.name === p.name);
-      if (existing) existing.quantity++;
-      else cart.push({ ...p, quantity: 1 });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      renderCart();
-      alert(`${p.name} added to cart!`);
-    }
+  saveCart();
+  alert(`${product.name} added to cart 🛒`);
+  // If cart page visible, re-render
+  if (document.getElementById('cart-items')) renderCartPage();
+};
+
+// ---------- INDEX / PRODUCTS PAGE ----------
+// Renders into element id="productList" if present
+function renderProductList(list = currentProducts) {
+  const productList = document.getElementById('productList') || document.getElementById('products-container');
+  if (!productList) return;
+  productList.innerHTML = ''; // clear existing
+
+  list.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'product';
+    card.dataset.category = p.category || 'all';
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.name}" />
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
+      <button class="add-btn" data-idx="${idx}">Add to Cart</button>
+    `;
+    productList.appendChild(card);
   });
 
-  // -------------------- Render Cart --------------------
-  function renderCart() {
-    if (!cartContainer) return;
-    cartContainer.innerHTML = "";
-    if (cart.length === 0) {
-      cartContainer.innerHTML = "<p>Your cart is empty.</p>";
-      return;
-    }
-
-    cart.forEach((item, idx) => {
-      cartContainer.innerHTML += `
-        <div class="cart-item">
-          <img src="${item.img}" width="60">
-          <div>
-            <h4>${item.name}</h4>
-            <p>₹${item.price}</p>
-            <div class="qty">
-              <button class="change-qty" data-idx="${idx}" data-delta="-1">-</button>
-              <span>${item.quantity}</span>
-              <button class="change-qty" data-idx="${idx}" data-delta="1">+</button>
-            </div>
-            <button class="remove-item" data-idx="${idx}">Remove</button>
-          </div>
-        </div>
-      `;
+  // Delegated event for add buttons
+  productList.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const i = parseInt(btn.dataset.idx);
+      addToCart(i);
     });
+  });
+}
 
-    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    cartContainer.innerHTML += `<p>Total: ₹${total}</p>`;
-    cartContainer.innerHTML += `<button id="checkout-btn">Checkout</button>`;
+// ---------- SEARCH, FILTER, SORT ----------
+function setupSearchFilterSort() {
+  const searchBar = document.getElementById('searchBar') || document.getElementById('search');
+  const categoryFilter = document.getElementById('categoryFilter') || document.getElementById('category-filter');
+  const priceSort = document.getElementById('priceSort') || document.getElementById('priceSort') || document.getElementById('sort-select');
 
-    // Cart buttons
-    document.querySelectorAll(".change-qty").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = btn.dataset.idx;
-        const delta = parseInt(btn.dataset.delta);
-        cart[idx].quantity += delta;
-        if (cart[idx].quantity <= 0) cart.splice(idx, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-      });
-    });
+  function applyAll() {
+    let list = [...currentProducts];
 
-    document.querySelectorAll(".remove-item").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = btn.dataset.idx;
-        cart.splice(idx, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-      });
-    });
+    // search
+    const q = (searchBar && searchBar.value) ? searchBar.value.trim().toLowerCase() : '';
+    if (q) list = list.filter(p => p.name.toLowerCase().includes(q));
 
-    // Checkout button
-    const checkoutBtn = document.getElementById("checkout-btn");
-    if (checkoutBtn) checkoutBtn.addEventListener("click", checkout);
+    // filter
+    const cat = categoryFilter ? categoryFilter.value : 'all';
+    if (cat && cat !== 'all') list = list.filter(p => p.category === cat);
+
+    // sort
+    const s = priceSort ? priceSort.value : 'default';
+    if (s === 'low') list.sort((a,b)=>a.price-b.price);
+    if (s === 'high') list.sort((a,b)=>b.price-a.price);
+    if (s === 'asc') list.sort((a,b)=>a.price-b.price);
+    if (s === 'desc') list.sort((a,b)=>b.price-a.price);
+
+    renderProductList(list);
   }
 
-  // -------------------- Search / Filter / Sort --------------------
-  const searchInput = document.getElementById("search");
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      const filtered = currentProducts.filter(p => p.name.toLowerCase().includes(searchInput.value.toLowerCase()));
-      displayProducts(filtered);
-    });
+  if (searchBar) searchBar.addEventListener('input', applyAll);
+  if (categoryFilter) categoryFilter.addEventListener('change', applyAll);
+  if (priceSort) priceSort.addEventListener('change', applyAll);
+}
+
+// ---------- CART PAGE RENDER ----------
+function renderCartPage() {
+  const cartItems = document.getElementById('cart-items') || document.getElementById('cart-items-container') || document.getElementById('cart-container');
+  const cartTotal = document.getElementById('cart-total') || document.getElementById('cart-total') || document.getElementById('totalContainer');
+
+  if (!cartItems) return;
+
+  cartItems.innerHTML = '';
+  if (!cart || cart.length === 0) {
+    cartItems.innerHTML = '<p>Your cart is empty.</p>';
+    if (cartTotal) cartTotal.textContent = '';
+    return;
   }
 
-  const categoryFilter = document.getElementById("category-filter");
-  if (categoryFilter) {
-    categoryFilter.addEventListener("change", () => {
-      const filtered = categoryFilter.value === "all" ? currentProducts : currentProducts.filter(p => p.category === categoryFilter.value);
-      displayProducts(filtered);
-    });
+  let total = 0;
+  cart.forEach((it, idx) => {
+    const subtotal = (it.price || 0) * (it.quantity || 1);
+    total += subtotal;
+
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'cart-item';
+    itemDiv.innerHTML = `
+      <img src="${it.img || 'images/default.png'}" alt="${it.name}" width="60">
+      <div class="cart-info">
+        <h4>${it.name}</h4>
+        <p>Price: ₹${it.price}</p>
+        <p>Subtotal: ₹${subtotal}</p>
+      </div>
+      <div class="cart-actions">
+        <button class="dec" data-idx="${idx}">−</button>
+        <span class="qty">${it.quantity}</span>
+        <button class="inc" data-idx="${idx}">+</button>
+        <button class="rm" data-idx="${idx}">🗑️</button>
+      </div>
+    `;
+    cartItems.appendChild(itemDiv);
+  });
+
+  if (cartTotal) cartTotal.textContent = `Total Amount: ₹${total}`;
+
+  // buttons
+  cartItems.querySelectorAll('.inc').forEach(b => b.addEventListener('click', (e)=>{
+    const i = parseInt(b.dataset.idx); cart[i].quantity++; saveCart(); renderCartPage();
+  }));
+  cartItems.querySelectorAll('.dec').forEach(b => b.addEventListener('click', (e)=>{
+    const i = parseInt(b.dataset.idx); if (cart[i].quantity>1) cart[i].quantity--; else cart.splice(i,1); saveCart(); renderCartPage();
+  }));
+  cartItems.querySelectorAll('.rm').forEach(b => b.addEventListener('click', (e)=>{
+    const i = parseInt(b.dataset.idx); cart.splice(i,1); saveCart(); renderCartPage();
+  }));
+}
+
+// ---------- CHECKOUT (PhonePe simulation) ----------
+window.phonePePay = function() {
+  if (!cart || cart.length === 0) { alert("Cart empty"); return; }
+  const total = cart.reduce((s,i)=>s + (i.price||0)*(i.quantity||1), 0);
+  alert(`Simulated PhonePe payment of ₹${total} successful!`);
+  cart = []; saveCart(); renderCartPage();
+  // redirect to thank you page if exists: window.location.href='thankyou.html';
+};
+
+// ---------- INIT on DOM ready ----------
+document.addEventListener('DOMContentLoaded', () => {
+  // Render product list on index page if productList exists OR products-container exists
+  if (document.getElementById('productList') || document.getElementById('products-container')) {
+    renderProductList(currentProducts);
+    setupSearchFilterSort();
   }
 
-  const sortSelect = document.getElementById("sort-select");
-  if (sortSelect) {
-    sortSelect.addEventListener("change", () => {
-      const sorted = [...currentProducts].sort((a, b) => sortSelect.value === "asc" ? a.price - b.price : b.price - a.price);
-      displayProducts(sorted);
-    });
+  // If the page has static product elements (already in HTML) and the user uses inline onclick addToCart('Name', price)
+  // we already provided window.addToCart that accepts (name, price, img). So both modes supported.
+
+  // Render cart if cart page present
+  if (document.getElementById('cart-items') || document.getElementById('cart-container') || document.getElementById('cart-items-container')) {
+    renderCartPage();
   }
 
-  // -------------------- Login --------------------
-  window.handleLogin = async function () {
-    const username = document.getElementById('username')?.value;
-    const password = document.getElementById('password')?.value;
-    try {
-      const res = await fetch(`${BACKEND_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem('loggedUser', username);
-        alert("Login successful!");
-        window.location.href = 'index.html';
-      } else alert("Invalid username or password!");
-    } catch (err) {
-      console.error("Login failed:", err);
-      alert("Server error during login.");
-    }
-  };
-
-  // -------------------- Signup --------------------
-  window.signup = async function () {
-    const username = document.getElementById("signup-username").value;
-    const password = document.getElementById("signup-password").value;
-    try {
-      const res = await fetch(`${BACKEND_URL}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      alert(data.message);
-    } catch (err) {
-      console.error("Signup failed:", err);
-      alert("Server error during signup.");
-    }
-  };
-
-  // -------------------- Checkout --------------------
-  async function checkout() {
-    const phoneNumber = document.getElementById("phone-number")?.value;
-    if (!phoneNumber || cart.length === 0) {
-      alert("Add items to cart and enter phone number");
-      return;
-    }
-
-    try {
-      // Create order
-      const orderRes = await fetch(`${BACKEND_URL}/order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart, phoneNumber })
-      });
-      const orderData = await orderRes.json();
-      if (!orderData.success) { alert("Order creation failed!"); return; }
-
-      // Simulate PhonePe / UPI link
-      const amount = cart.reduce((a, b) => a + b.price * b.quantity, 0);
-      const upiLink = `upi://pay?pa=merchant-vpa@upi&pn=GroceryStore&tr=${orderData.orderId}&tn=Order+Payment&am=${amount}&cu=INR`;
-      window.location.href = upiLink;
-
-      // After payment
-      cart = [];
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
-      // window.location.href='thankyou.html'; // redirect after real payment
-    } catch (err) {
-      console.error("Checkout failed:", err);
-      alert("Error during checkout.");
-    }
-  }
-
-  // -------------------- Logged User Display --------------------
-  const user = localStorage.getItem('loggedUser');
-  if (user) {
-    const userDiv = document.createElement('div');
-    userDiv.id = 'loggedUser';
-    userDiv.innerHTML = `Welcome, ${user} <button id="logoutBtn">Logout</button>`;
-    document.body.prepend(userDiv);
-    document.getElementById('logoutBtn').onclick = () => {
-      localStorage.removeItem('loggedUser');
-      window.location.href = 'login.html';
-    };
-  } else if (window.location.pathname.includes('index.html')) {
-    window.location.href = 'login.html';
-  }
-
-  // -------------------- Initialize --------------------
-  await loadProducts();
-  renderCart();
+  // debug helpers in console
+  console.log("App initialized. Products:", currentProducts.length, "Cart items:", cart.length);
 });

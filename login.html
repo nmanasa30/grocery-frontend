@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Manasa Provisions</title>
 <link rel="stylesheet" href="style.css">
+
 <style>
   body, html {
     height: 100%;
@@ -165,6 +166,7 @@ document.getElementById("login-btn").addEventListener("click", (e) => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
   const remember = document.getElementById("remember").checked;
+const BACKEND_URL = "https://grocery-backend.onrender.com";
 
   // Demo login check
   if(username === "manasan" && password === "123456"){
@@ -182,6 +184,7 @@ document.getElementById("login-btn").addEventListener("click", (e) => {
   }
 });
 </script>
+<script src="store.js"></script>
 
 </body>
 </html>

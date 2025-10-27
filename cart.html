@@ -1,86 +1,123 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Cart - Manasa Provisions</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart - Manasa Provisions 🛒</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body { font-family: Arial, sans-serif; background:#f7f7f7; margin:0; padding:0; }
+header { background:#4caf50; color:white; text-align:center; padding:15px; font-size:22px; }
+header nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold; }
+
+.cart-container { max-width:900px; margin:30px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.cart-item { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ddd; padding-bottom:10px; }
+.cart-item img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
+.cart-item-details { display:flex; align-items:center; gap:10px; }
+.cart-item h3 { margin:0; font-size:16px; color:#333; }
+.cart-item p { margin:3px 0; color:#666; }
+.cart-item-actions button { padding:4px 10px; border:none; background:#4caf50; color:white; border-radius:4px; cursor:pointer; font-size:16px; }
+.cart-item-actions span { margin:0 8px; font-weight:bold; }
+
+#cart-total { text-align:right; font-size:18px; font-weight:bold; margin-top:15px; }
+.checkout-btn { display:block; float:right; margin-top:20px; padding:10px 20px; background:#4caf50; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>🛍️  Manasa Provisions</h1>
-    <nav>
-      <a href="index.html">Back to Shop</a>
-    </nav>
-  </header>
+<header>
+  <h1>Manasa Provisions 🛍️</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="checkout.html">Checkout</a>
+  </nav>
+</header>
 
-  <div class="cart-container">
-    <div id="cart-items"></div>
-    <div class="cart-total" id="cart-total"></div>
-    <button class="checkout" id="checkout-btn">Checkout</button>
-  </div>
+<section class="cart-container">
+  <h2>Your Cart Items</h2>
+  <div id="cartContainer"></div>
+  <h3 id="cart-total"></h3>
+  <button id="phonepe-btn" class="checkout-btn" onclick="phonePePay()">Pay with PhonePe 📱</button>
+  <button id="checkout-btn" class="checkout-btn">Proceed to Checkout</button>
+</section>
 
-  <script>
-   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartContainer = document.getElementById("cart-items");
-    const totalContainer = document.getElementById("cart-total");
-    function renderCart() {
-      cartContainer.innerHTML = "";
-      let total = 0;
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-cart.forEach((item, index) => {
-        total += item.price * (item.quantity || item.qty || 1);
-        const div = document.createElement("div");
-        div.classList.add("cart-item");
-        div.innerHTML = `
-          <h3>${item.name}</h3>
-          <p>₹${item.price}</p>
-          <div class="qty">
-            <button class="decrease" data-index="${index}">-</button>
-            <span>${item.quantity || item.qty || 1}</span>
-            <button class="increase" data-index="${index}">+</button>
-          </div>
-        `;
-        cartContainer.appendChild(div);
-      });
-      
-       totalContainer.textContent = "Total: ₹" + total;
+const cartContainer = document.getElementById("cartContainer");
+const totalContainer = document.getElementById("cart-total");
+const checkoutBtn = document.getElementById("checkout-btn");
 
-       // Quantity buttons
-      document.querySelectorAll(".increase").forEach(btn => {
-        btn.onclick = () => {
-          const i = btn.dataset.index;
-          cart[i].quantity = (cart[i].quantity || cart[i].qty || 1) + 1;
-          localStorage.setItem("cart", JSON.stringify(cart));
-          renderCart();
-        };
-      });
+function renderCart() {
+  cartContainer.innerHTML = "";
+  let total = 0;
 
-      document.querySelectorAll(".decrease").forEach(btn => {
-        btn.onclick = () => {
-          const i = btn.dataset.index;
-          if ((cart[i].quantity || cart[i].qty || 1) > 1) {
-            cart[i].quantity = (cart[i].quantity || cart[i].qty || 1) - 1;
-          } else {
-            cart.splice(i, 1);
-          }
-          localStorage.setItem("cart", JSON.stringify(cart));
-          renderCart();
-        };
-      });
-    }
+  if (cart.length === 0) {
+    cartContainer.innerHTML = "<p>Your cart is empty 🛒</p>";
+    totalContainer.textContent = "";
+    checkoutBtn.style.display = "none";
+    return;
+  }
 
-    renderCart();
+  cart.forEach((item, index) => {
+    const subtotal = (item.price || 0) * (item.quantity || 1);
+    total += subtotal;
 
-    document.getElementById("checkout-btn").onclick = () => {
-      if(cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
+    const div = document.createElement("div");
+    div.classList.add("cart-item");
+    div.innerHTML = `
+      <div class="cart-item-details">
+        <img src="${item.img || 'images/default.png'}" alt="${item.name}">
+        <div>
+          <h3>${item.name || "Unnamed Product"}</h3>
+          <p>Price: ₹${item.price}</p>
+          <p>Subtotal: ₹${subtotal}</p>
+        </div>
+      </div>
+      <div class="cart-item-actions">
+        <button onclick="changeQty(${index}, -1)">−</button>
+        <span>${item.quantity || 1}</span>
+        <button onclick="changeQty(${index}, 1)">+</button>
+        <button onclick="removeItem(${index})">🗑️</button>
+      </div>
+    `;
+    cartContainer.appendChild(div);
+  });
+
+  totalContainer.textContent = `Total Amount: ₹${total}`;
+  checkoutBtn.style.display = "block";
+}
+
+function changeQty(index, delta) {
+  cart[index].quantity += delta;
+  if (cart[index].quantity <= 0) cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+function phonePePay() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  alert("Redirecting to PhonePe payment simulation...");
+  window.location.href = "checkout.html";
+}
+
+renderCart();
+
+checkoutBtn.onclick = () => {
+  if (cart.length === 0) alert("Your cart is empty!");
+  else window.location.href = "checkout.html";
 };
-  </script>
+</script>
+<script src="store.js"></script>
+
 </body>
 </html>
