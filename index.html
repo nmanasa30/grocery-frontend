@@ -23,7 +23,10 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="cart.html">Cart 🛍️</a>
-      <a href="login.html">Login</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <a href="signup.html" id="signupLink">Signup</a>
+      <button id="logoutBtn" style="display:none;">Logout</button>
     </nav>
   </header>
 
@@ -49,7 +52,8 @@
     <h2>Available Products</h2>
     <div id="products-container" class="product-list"></div>
   </section>
-
+  <!-- Popup -->
+  <div id="popup" class="popup"></div>
   <!-- Footer -->
   <footer>
     <p>© 2025 Manasa Provisions | All Rights Reserved</p>
@@ -58,5 +62,41 @@
   <!-- Scripts -->
   <script src="store.js"></script>
   <script src="script.js"></script>
+  <script>
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginLink = document.getElementById('loginLink');
+    const signupLink = document.getElementById('signupLink');
+    const popup = document.getElementById('popup');
+
+    // Show popup message
+    function showPopup(message) {
+      popup.innerText = message;
+      popup.style.display = 'block';
+      popup.style.opacity = '1';
+      setTimeout(() => {
+        popup.style.opacity = '0';
+        setTimeout(() => popup.style.display = 'none', 500);
+      }, 2000);
+    }
+
+    // Check if user is logged in
+    const loggedUser = localStorage.getItem('loggedUser');
+    if (loggedUser) {
+      logoutBtn.style.display = 'inline-block';
+      loginLink.style.display = 'none';
+      signupLink.style.display = 'none';
+    } else {
+      logoutBtn.style.display = 'none';
+      loginLink.style.display = 'inline';
+      signupLink.style.display = 'inline';
+    }
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('loggedUser');
+      showPopup('Logged out successfully!');
+      setTimeout(() => window.location.href = 'login.html', 1500);
+    });
+  </script>
 </body>
 </html>
