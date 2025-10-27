@@ -1,49 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout - Manasa Provisions 🛍️</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | Manasa Grocery</title>
+  <link rel="stylesheet" href="style.css" />
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-    header { background: #4caf50; color: white; padding: 15px; text-align: center; }
-    header nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
-    .checkout-container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .checkout-item { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-    .checkout-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 10px; }
-    #cartSummary { margin-bottom: 20px; }
-    #checkoutForm input { display: block; width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    #checkoutForm button { padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; margin-right: 10px; }
-    #thankYou { display: none; text-align: center; font-size: 20px; color: green; margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .checkout-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #cartSummary img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      margin-right: 10px;
+    }
+
+    .checkout-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .checkout-item div {
+      flex: 1;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    #thankYou {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #28a745;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .btn-secondary {
+      background: #6c63ff;
+    }
+
+    .btn-secondary:hover {
+      background: #5548e3;
+    }
   </style>
 </head>
+
 <body>
+  <div class="checkout-container">
+    <h1>Checkout</h1>
 
-<header>
-  <h1>🛍️ Manasa Provisions</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="cart.html">Cart</a>
-  </nav>
-</header>
+    <!-- Cart Summary -->
+    <div id="cartSummary"></div>
 
-<section class="checkout-container">
-  <h2>Checkout</h2>
+    <!-- Checkout Form -->
+    <form id="checkoutForm">
+      <input type="text" id="name" placeholder="Enter your full name" required />
+      <input type="tel" id="phone" placeholder="Enter your phone number" required />
 
-  <div id="cartSummary"></div>
+      <div style="text-align:center; margin-top:20px;">
+        <button type="submit">Place Order 🛒</button>
+        <button type="button" id="phonepe-pay" class="btn-secondary">Pay with PhonePe 📱</button>
+      </div>
+    </form>
 
-  <form id="checkoutForm">
-    <input type="text" id="name" placeholder="Your Name" required>
-    <input type="tel" id="phone" placeholder="Phone Number" required>
-    <button type="submit">Place Order</button>
-    <button type="button" id="phonepe-pay">Pay with PhonePe 📱</button>
-  </form>
-
-  <div id="thankYou">🎉 Thank you! Your order has been placed successfully.</div>
-</section>
+    <!-- Thank You Message -->
+    <div id="thankYou">🎉 Thank you for shopping with Manasa Grocery! 🛍️</div>
+  </div>
 <script src="store.js"></script>
-
-<script src="checkout.js"></script>
+  <script src="script.js"></script>
+  <script src="checkout.js"></script>
 </body>
 </html>
