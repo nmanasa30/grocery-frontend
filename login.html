@@ -126,7 +126,8 @@
       <label for="remember">Remember me</label>
     </div>
 
-    <button id="login-btn">Login</button>
+    <!-- FIXED: added type="button" -->
+    <button id="login-btn" type="button">Login</button>
   </form>
   <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
 </div>
@@ -161,14 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Login logic
-document.getElementById("login-btn").addEventListener("click", (e) => {
-  e.preventDefault();
+document.getElementById("login-btn").addEventListener("click", () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
   const remember = document.getElementById("remember").checked;
-const BACKEND_URL = "https://grocery-backend.onrender.com";
 
-  // Demo login check
   if(username === "manasan" && password === "123456"){
     if(remember){
       localStorage.setItem("rememberedUser", username);
@@ -177,14 +175,14 @@ const BACKEND_URL = "https://grocery-backend.onrender.com";
     }
 
     localStorage.setItem("loggedUser", username);
-    showPopup("Login successful!");
-    setTimeout(()=> window.location.href = "index.html", 1000);
+    showPopup("✅ Login successful!");
+    setTimeout(()=> window.location.href = "index.html", 1500);
   } else {
-    showPopup("Invalid username or password!");
+    showPopup("❌ Invalid username or password!");
   }
 });
 </script>
-<script src="store.js"></script>
 
+<script src="store.js"></script>
 </body>
 </html>
