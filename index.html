@@ -30,24 +30,32 @@
     </nav>
   </header>
 
-  <!-- Filters & Sorting -->
+  
+     <input id="searchBar" oninput="searchProducts()" placeholder="Search products...">
+<select id="categoryFilter" onchange="filterProducts()">
+  <option value="all">All</option>
+  <option value="grains">Grains</option>
+  <option value="vegetables">Vegetables</option>
+  <option value="snacks">Snacks</option>
+  <option value="dairy">Dairy</option>
+</select>
+<select id="priceSort" onchange="sortProducts()">
+  <option value="default">Sort by</option>
+  <option value="low">Price: Low to High</option>
+  <option value="high">Price: High to Low</option>
+</select>
 
-  <div class="filters">
-    <select id="categoryFilter" onchange="filterProducts()">
-      <option value="all">All Categories</option>
-      <option value="grains">Grains</option>
-      <option value="vegetables">Vegetables</option>
-      <option value="snacks">Snacks</option>
-      <option value="dairy">Dairy</option>
-    </select>
+<div id="products-container"></div>
 
-    <select id="priceSort" onchange="sortProducts()">
-      <option value="default">Sort by Price</option>
-      <option value="low">Low → High</option>
-      <option value="high">High → Low</option>
-    </select>
-  </div>
 
+
+<!-- include store.js (MUST be present) -->
+<script src="store.js"></script>
+<!-- if you have a separate script.js that calls functions from store.js, include it AFTER store.js -->
+<script src="script.js"></script>
+
+
+   
   <!-- Products Section -->
 <section id="products">
   <h2>Available Products</h2>
@@ -255,9 +263,5 @@
     <p>© 2025 Manasa Provisions | All Rights Reserved</p>
   </footer>
 
-<script src="store.js"></script>
-
-  <!-- JS -->
-  <script src="script.js"></script>
 </body>
 </html>
