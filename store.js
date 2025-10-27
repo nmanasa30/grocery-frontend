@@ -1,16 +1,49 @@
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 const BACKEND_URL = "https://grocery-backend.onrender.com";
 let currentProducts = [
-  { name: "Rice", price: 60, category: "grains", img: "images/rice.jpeg" },
-  { name: "Corn Flour", price: 50, category: "grains", img: "images/cone.webp" },
-  { name: "Freedom Oil", price: 120, category: "oil", img: "images/oil.jpeg" },
-  { name: "Milk", price: 40, category: "dairy", img: "images/milk.jpeg" },
-  { name: "Butter", price: 80, category: "dairy", img: "images/butter.jpeg" },
-  { name: "Good Day Biscuits", price: 30, category: "dairy", img: "images/goodday.jpeg" },
-  { name: "Dairy Milk Chocolate", price: 40, category: "dairy", img: "images/dairymilk.jpeg" },
-  { name: "Butter Cookies", price: 50, category: "dairy", img: "images/cookies.jpeg" }
+  // Grains
+  {name:"Rice (1kg)", price:60, category:"grains", img:"images/rice.jpeg"},
+  {name:"Corn Flour (1kg)", price:50, category:"grains", img:"images/cone.webp"},
+  {name:"Freedom Oil (1L)", price:90, category:"grains", img:"images/freedom oil.webp"},
+  {name:"Green Gram (1kg)", price:68, category:"grains", img:"images/green.webp"},
+  {name:"Red Gram (1kg)", price:88, category:"grains", img:"images/red.webp"},
+  {name:"Maida Flour (1kg)", price:50, category:"grains", img:"images/mida.webp"},
+  {name:"Wheat Flour (1kg)", price:55, category:"grains", img:"images/wheat.webp"},
+  {name:"Sugar (1kg)", price:55, category:"grains", img:"images/sugar.jpeg"},
+  {name:"Sunflower Oil (1L)", price:160, category:"grains", img:"images/oil.jpeg"},
+
+  // Vegetables
+  {name:"Tomato (1kg)", price:40, category:"vegetables", img:"images/tamoto.jpeg"},
+  {name:"Onions (1kg)", price:40, category:"vegetables", img:"images/onion.jpeg"},
+
+  // Snacks
+  {name:"Lays Chips", price:20, category:"snacks", img:"images/lays.jpeg"},
+  {name:"Andhra Mixture (500g)", price:70, category:"snacks", img:"images/mixture.jpeg"},
+  {name:"Cake", price:40, category:"snacks", img:"images/cake.webp"},
+  {name:"Dark Fantasy", price:90, category:"snacks", img:"images/dark.webp"},
+  {name:"Fuse", price:20, category:"snacks", img:"images/fuse.webp"},
+  {name:"JimJam", price:10, category:"snacks", img:"images/jimjam.webp"},
+  {name:"Kitkat", price:40, category:"snacks", img:"images/kitkat.webp"},
+  {name:"Kurkure", price:30, category:"snacks", img:"images/kurkkure.webp"},
+  {name:"Orea", price:50, category:"snacks", img:"images/orea.webp"},
+  {name:"Snikers", price:20, category:"snacks", img:"images/snikers.webp"},
+  {name:"Maggi Noodles", price:15, category:"snacks", img:"images/maggi.jpeg"},
+
+  // Dairy
+  {name:"Milk (1L)", price:50, category:"dairy", img:"images/milk.jpeg"},
+  {name:"Good Day Biscuits", price:30, category:"dairy", img:"images/goodday.jpeg"},
+  {name:"Dairy Milk Chocolate", price:40, category:"dairy", img:"images/dairymilk.jpeg"},
+  {name:"Butter Cookies", price:50, category:"dairy", img:"images/cookies.jpeg"}
 ];
 
+function addToCart(name, price, img) {
+  let existing = cart.find(item => item.name === name);
+  if (existing) existing.quantity++;
+  else cart.push({ name, price, img, quantity: 1 });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert(`${name} added to cart 🛒`);
+}
 // ---------- Logged User ----------
 const user = localStorage.getItem('loggedUser');
 if(user){
