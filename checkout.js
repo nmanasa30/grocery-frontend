@@ -61,7 +61,16 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  const orderData = { name, phoneNumber: phone, address, pincode, cart };
+  const orderData = { 
+  name, 
+  phoneNumber: phone, 
+  address, 
+  pincode, 
+  cart, 
+  status: "Paid",  // ✅ this will show "Paid" in orders.html
+  date: new Date().toLocaleString() // ✅ adds date & time
+};
+
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/order`, {
