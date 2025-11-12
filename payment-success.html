@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Successful 🎉</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #e6fffa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .success-box {
+    background: white;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .success-box h2 {
+    color: #2c7a7b;
+    font-size: 28px;
+    margin-bottom: 15px;
+  }
+
+  .success-box p {
+    font-size: 16px;
+    color: #333;
+  }
+
+  button {
+    margin-top: 25px;
+    padding: 12px 25px;
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background-color: #276363;
+  }
+
+  .emoji {
+    font-size: 50px;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="success-box">
+  <div class="emoji">✅</div>
+  <h2>Payment Successful!</h2>
+  <p id="userDetails"></p>
+  <button onclick="window.location.href='index.html'">Back to Home 🏠</button>
+</div>
+
+<script>
+  // Load order details from localStorage
+  const order = JSON.parse(localStorage.getItem("lastOrder"));
+  const userDetails = document.getElementById("userDetails");
+
+  if (order) {
+    const total = order.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    userDetails.innerHTML = `
+      <strong>Order ID:</strong> ${order.id || 'N/A'} <br>
+      <strong>Name:</strong> ${order.name}<br>
+      <strong>Amount Paid:</strong> ₹${total}<br>
+      <strong>Status:</strong> ✅ Paid Successfully
+    `;
+  } else {
+    userDetails.innerHTML = "No order data found. Please go back to checkout.";
+  }
+</script>
+
+</body>
+</html>

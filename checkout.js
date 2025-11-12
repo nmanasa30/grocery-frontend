@@ -1,110 +1,120 @@
-// ------------------ GLOBAL VARIABLES ------------------
-const BACKEND_URL = "https://grocery-backend.onrender.com/api";
-let products = []; // fetched from backend
+const BACKEND_URL = "https://grocery-backend-7hlc.onrender.com";  // ✅ Your Render backend
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-const cartSummary = document.getElementById("cartSummary");
-const checkoutForm = document.getElementById("checkoutForm");
-const thankYouDiv = document.getElementById("thankYou");
-const phonepeBtn = document.getElementById("phonepe-pay");
+const summaryBox = document.getElementById("cartSummary");
+const totalAmount = document.getElementById("totalAmount");
+const form = document.getElementById("checkoutForm");
+const thankYou = document.getElementById("thankYou");
+const phonepeBtn = document.getElementById("phonepeBtn");
 
-// ------------------ LOAD CART SUMMARY ------------------
-function loadCartSummary() {
-  cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cartSummary.innerHTML = "";
-
+/* ✅ Load Cart Summary */
+function loadSummary() {
+  summaryBox.innerHTML = "";
   if (cart.length === 0) {
-    cartSummary.innerHTML = "<p>Your cart is empty!</p>";
-    checkoutForm.style.display = "none";
-    if (phonepeBtn) phonepeBtn.style.display = "none";
+    summaryBox.innerHTML = "<p>Your cart is empty 🛒</p>";
+    totalAmount.textContent = "Total: ₹0";
     return;
   }
 
   let total = 0;
-  cart.forEach(item => {
-    const qty = item.qty || 1;
-    const itemTotal = item.price * qty;
-    total += itemTotal;
 
-    cartSummary.innerHTML += `
+  cart.forEach(item => {
+    const sub = item.price * item.quantity;
+    total += sub;
+
+    summaryBox.innerHTML += `
       <div class="checkout-item">
-        <img src="${item.img || 'images/default.png'}" alt="${item.name}">
-        <div>
-          <p><strong>${item.name}</strong> × ${qty}</p>
-          <p>₹${itemTotal}</p>
+        <div style="display:flex; align-items:center;">
+          <img src="${item.img}" width="60" height="60" style="margin-right:10px;">
+          <div>
+            <p><strong>${item.name}</strong></p>
+            <p>₹${item.price} × ${item.quantity}</p>
+          </div>
         </div>
+        <p>₹${sub}</p>
       </div>
     `;
   });
 
-  cartSummary.innerHTML += `<p><strong>Total: ₹${total}</strong></p>`;
+  totalAmount.textContent = "Total: ₹" + total;
+}
+loadSummary();
+
+/* ✅ Save order history in localStorage */
+function saveOrderHistory(order) {
+  let orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+  orders.push(order);
+  localStorage.setItem("orderHistory", JSON.stringify(orders));
 }
 
-window.onload = loadCartSummary;
-
-// ------------------ PLACE ORDER ------------------
-checkoutForm.addEventListener("submit", (e) => {
+/* ✅ Place Order (send to backend + thank you) */
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  let name = document.getElementById("name").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let address = document.getElementById("address").value.trim();
+  let pincode = document.getElementById("pincode").value.trim();
 
-  if (!name || !phone) {
-    alert("⚠️ Please fill all the details!");
+  if (!name || !phone || !address || !pincode) {
+    alert("Please fill all details!");
     return;
   }
 
-  if (cart.length === 0) {
-    alert("🛒 Your cart is empty!");
-    return;
+  const orderData = { name, phoneNumber: phone, address, pincode, cart };
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    });
+
+    const data = await res.json();
+
+    if (data.status === "success") {
+      saveOrderHistory({ ...orderData, orderId: data.orderId });
+      alert("✅ Order saved! Please scan and pay now.");
+      localStorage.setItem("currentOrderId", data.orderId);
+    } else {
+      alert("⚠️ Order failed: " + data.message);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Server error while placing order!");
   }
-
-  alert(`✅ Thank you ${name}! Your order has been placed successfully.`);
-
-  // Clear cart and show success
-  localStorage.removeItem("cart");
-  cart = [];
-  loadCartSummary();
-  checkoutForm.style.display = "none";
-  thankYouDiv.style.display = "block";
-
-  // Redirect after 3 seconds
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 3000);
 });
 
-// ------------------ PHONEPE PAYMENT SIMULATION ------------------
-if (phonepeBtn) {
-  phonepeBtn.addEventListener("click", () => {
-    if (cart.length === 0) {
-      alert("🛒 Your cart is empty!");
-      return;
+/* ✅ PhonePe payment click */
+phonepeBtn.addEventListener("click", async () => {
+  if (cart.length === 0) return alert("Cart is empty!");
+
+  alert("📱 Please scan the QR code using PhonePe or GPay to pay.");
+
+  const orderId = localStorage.getItem("currentOrderId");
+  if (orderId) {
+    try {
+      // Notify backend that payment succeeded
+      await fetch(`${BACKEND_URL}/api/payment-success`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId })
+      });
+      console.log("Payment success recorded for order:", orderId);
+    } catch (err) {
+      console.error("Payment update failed", err);
     }
+  }
 
-    const phoneNumber = prompt("📱 Enter your PhonePe number:");
-    if (!phoneNumber) {
-      alert("❌ Payment cancelled!");
-      return;
-    }
+  // Save last order for the success page
+  const lastOrder = {
+    id: orderId || Date.now(),
+    name: document.getElementById("name").value.trim(),
+    cart
+  };
+  localStorage.setItem("lastOrder", JSON.stringify(lastOrder));
 
-    const totalAmount = cart.reduce((sum, item) => sum + item.price * (item.qty || 1), 0);
-    const orderId = "ORDER_" + new Date().getTime();
-
-    alert(`🔄 Redirecting to PhonePe for ₹${totalAmount}...`);
-
-    setTimeout(() => {
-      alert(`🎉 Payment successful via PhonePe!\nOrder ID: ${orderId}`);
-      localStorage.removeItem("cart");
-      cart = [];
-      loadCartSummary();
-      checkoutForm.style.display = "none";
-      thankYouDiv.style.display = "block";
-
-      // Auto redirect after 3 seconds
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 3000);
-    }, 2000);
-  });
-}
+  localStorage.removeItem("cart");
+  setTimeout(() => (window.location.href = "payment-success.html"), 3000);
+});

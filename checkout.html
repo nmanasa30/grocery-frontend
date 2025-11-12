@@ -1,125 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout | Manasa Grocery</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - Manasa Provisions 🛒</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f8f8;
-      margin: 0;
-      padding: 0;
-    }
+<link rel="stylesheet" href="checkout.css">
 
-    .checkout-container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px 30px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-
-    #cartSummary img {
-      width: 60px;
-      height: 60px;
-      border-radius: 10px;
-      margin-right: 10px;
-    }
-
-    .checkout-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-
-    .checkout-item div {
-      flex: 1;
-    }
-
-    form {
-      margin-top: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    button {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-right: 10px;
-    }
-
-    button:hover {
-      background: #218838;
-    }
-
-    #thankYou {
-      display: none;
-      text-align: center;
-      padding: 20px;
-      color: #28a745;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .btn-secondary {
-      background: #6c63ff;
-    }
-
-    .btn-secondary:hover {
-      background: #5548e3;
-    }
-  </style>
 </head>
-
 <body>
-  <div class="checkout-container">
-    <h1>Checkout</h1>
 
-    <!-- ✅ Keep only one cart summary div -->
+<header>
+  <h1>Manasa Provisions 🛍️</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="orders.html">My Orders</a>
+
+  </nav>
+</header>
+
+<section class="checkout-section">
+
+  <div class="summary-box">
+    <h2>🛒 Order Summary</h2>
     <div id="cartSummary"></div>
-
-    <!-- Checkout Form -->
-    <form id="checkoutForm">
-      <input id="name" placeholder="Enter your name" required>
-      <input id="phone" placeholder="Enter phone number" required>
-      <button type="submit">Place Order</button>
-    </form>
-
-    <!-- Thank You Message -->
-    <div id="thankYou">
-      <h3>🎉 Thank you! Your order has been placed successfully.</h3>
-    </div>
-
-    <!-- PhonePe Payment Button -->
-    <button id="phonepe-pay" class="btn-secondary">Pay with PhonePe</button>
+    <h3 id="totalAmount" class="total">Total: ₹0</h3>
   </div>
 
-  <!-- ✅ Load only checkout.js for this page -->
-  <script src="checkout.js"></script>
-  <script src="store.js"></script>
-  <script src="script.js"></script>
-  
+  <div class="details-box">
+    <h2>📦 Delivery Details</h2>
+
+    <form id="checkoutForm">
+      <input id="name" type="text" placeholder="Enter your name" required>
+      <input id="phone" type="tel" placeholder="Enter phone number" required>
+      <input id="address" type="text" placeholder="Enter delivery address" required>
+      <input id="city" type="text" placeholder="Enter city" required>
+      <input id="pincode" type="text" placeholder="Enter pincode" required>
+      <button type="submit" class="place-btn">✅ Place Order</button>
+    </form>
+
+    <button id="phonepeBtn" class="phonepe-btn">💜 Pay with PhonePe</button>
+
+    <p id="thankYou" class="thankyou">🎉 Order placed successfully!</p>
+  </div>
+<div class="qr-section">
+  <h2>Scan & Pay Using PhonePe</h2>
+  <img src="images/Qr code.jpg" class="qr-img">
+  <p class="upi-id">9032613079@axl</p>
+</div>
+
+</section>
+
+<footer>
+  <p>© 2025 Manasa Provisions. All rights reserved.</p>
+</footer>
+
+<script src="checkout.js"></script>
+
 </body>
 </html>

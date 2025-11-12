@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+}
+
+/* Header */
+header {
+  background: #4caf50;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 22px;
+}
+
+header nav a {
+  color: white;
+  font-weight: bold;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+/* Checkout Layout */
+.checkout-section {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 10px;
+}
+
+.summary-box, .details-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
+
+.summary-box h2, .details-box h2 {
+  color: #2e7d32;
+}
+
+/* Items */
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.checkout-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.total {
+  background: #e8ffe8;
+  padding: 10px 16px;
+  width: fit-content;
+  border-radius: 8px;
+  border: 2px solid #4caf50;
+}
+
+/* Input fields */
+input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  outline: none;
+  margin: 10px 0;
+}
+
+/* Buttons */
+.place-btn {
+  width: 100%;
+  background: #2e7d32;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.place-btn:hover {
+  background: #256428;
+}
+
+.phonepe-btn {
+  width: 100%;
+  background: #6c63ff;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+.phonepe-btn:hover {
+  background: #5148e8;
+}
+
+/* Success Message */
+.thankyou {
+  text-align: center;
+  color: #2e7d32;
+  font-size: 18px;
+  display: none;
+  margin-top: 20px;
+}
+
+/* Footer */
+footer {
+  background: #4caf50;
+  padding: 15px;
+  text-align: center;
+  color: white;
+  margin-top: 40px;
+}
+
+.qr-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.qr-img {
+  width: 220px;
+  height: 220px;
+  border-radius: 10px;
+}
+
+.upi-id {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #333;
+}

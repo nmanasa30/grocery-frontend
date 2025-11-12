@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - Manasa Provisions</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+     background:#2e7d32;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 22px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .orders-container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .order {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+
+    .order:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      color: #2c7a7b;
+      margin-bottom: 15px;
+    }
+
+    .status {
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 8px;
+      color: white;
+    }
+
+    .paid { background-color: #38a169; }
+    .pending { background-color: #ed8936; }
+
+    .empty {
+      text-align: center;
+      font-size: 18px;
+      color: gray;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+       background:#2e7d32;
+      color: white;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📦 My Orders</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="checkout.html">Checkout</a>
+    </nav>
+  </header>
+
+  <div class="orders-container" id="ordersContainer">
+    <h2>🛒 Your Order History</h2>
+    <div id="ordersList" class="orders-list"></div>
+  </div>
+
+  <footer>
+    <p>© 2025 Manasa Provisions. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const ordersList = document.getElementById("ordersList");
+    const orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+
+    if (orders.length === 0) {
+      ordersList.innerHTML = '<p class="empty">No orders yet 😢</p>';
+    } else {
+      orders.forEach(order => {
+        const total = order.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        ordersList.innerHTML += `
+          <div class="order">
+            <h3>Order #${order.orderId || 'N/A'}</h3>
+            <p><strong>Name:</strong> ${order.name}</p>
+            <p><strong>Phone:</strong> ${order.phoneNumber}</p>
+            <p><strong>Address:</strong> ${order.address}, Pincode: ${order.pincode}</p>
+            <p><strong>Total:</strong> ₹${total}</p>
+            <p><strong>Status:</strong> 
+              <span class="status ${order.status === 'Paid' ? 'paid' : 'pending'}">
+                ${order.status || 'Pending Payment'}
+              </span>
+            </p>
+          </div>
+        `;
+      });
+    }
+  </script>
+
+</body>
+</html>

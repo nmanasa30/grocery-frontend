@@ -1,102 +1,91 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manasa Provisions 🛍️</title>
-  
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- CSS -->
+  <title>Manasa Provisions 🛒</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <!-- Header -->
-  <header>
-    <h1>🛒 Manasa Provisions</h1>
-    <input type="text" id="searchBar" placeholder="Search products..." oninput="searchProducts()">
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="cart.html">Cart 🛍️</a>
-      <a href="checkout.html">Checkout</a>
-      <a href="login.html" id="loginLink">Login</a>
-      <a href="signup.html" id="signupLink">Signup</a>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </nav>
-  </header>
+<a id="whatsapp-btn" href="https://wa.me/91XXXXXXXXXX" target="_blank">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
 
-  <!-- Filter and Sort -->
-  <div class="controls">
-    <select id="categoryFilter" onchange="filterProducts()">
-      <option value="all">All Categories</option>
-      <option value="grains">Grains</option>
-      <option value="vegetables">Vegetables</option>
-      <option value="snacks">Snacks</option>
-      <option value="dairy">Dairy</option>
-    </select>
+<!-- ✅ Back-to-Top Button -->
+<button id="backToTop" class="back-to-top">↑</button>
 
-    <select id="priceSort" onchange="sortProducts()">
-      <option value="default">Sort by</option>
-      <option value="low">Price: Low to High</option>
-      <option value="high">Price: High to Low</option>
-    </select>
+<!-- ✅ HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">🛒</div>
+    <h1 class="site-title">Manasa Provisions</h1>
   </div>
 
-  <!-- Products -->
-  <section id="products">
-    <h2>Available Products</h2>
-    <div id="products-container" class="product-list"></div>
-  </section>
-  <!-- Popup -->
-  <div id="popup" class="popup"></div>
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 Manasa Provisions | All Rights Reserved</p>
-  </footer>
+  <div class="search-box">
+    <input id="searchBar" type="text" placeholder="Search for rice, oil, biscuits...">
+  </div>
 
-  <!-- Scripts -->
-  <script src="store.js"></script>
-  <script src="script.js"></script>
-  <script>
-    const logoutBtn = document.getElementById('logoutBtn');
-    const loginLink = document.getElementById('loginLink');
-    const signupLink = document.getElementById('signupLink');
-    const popup = document.getElementById('popup');
+  <nav class="nav-links">
+    <a href="cart.html">Cart 🛍️</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="login.html">Login</a>
+    <a href="signup.html">Signup</a>
+    <a href="orders.html" class="order-btn">📦 My Orders</a>
+  </nav>
+</header>
+<!-- ✅ SLIDESHOW BANNER -->
+<section class="slider">
+  <div class="slides">
 
-    // Show popup message
-    function showPopup(message) {
-      popup.innerText = message;
-      popup.style.display = 'block';
-      popup.style.opacity = '1';
-      setTimeout(() => {
-        popup.style.opacity = '0';
-        setTimeout(() => popup.style.display = 'none', 500);
-      }, 2000);
-    }
+    <div class="slide active">
+      <img src="https://img.freepik.com/premium-photo/grocery-basket-full-foods-vegetables-fruits-isolated-white-background_488220-23126.jpg">
+    </div>
 
-    // Check if user is logged in
-    const loggedUser = localStorage.getItem('loggedUser');
-    if (loggedUser) {
-      logoutBtn.style.display = 'inline-block';
-      loginLink.style.display = 'none';
-      signupLink.style.display = 'none';
-    } else {
-      logoutBtn.style.display = 'none';
-      loginLink.style.display = 'inline';
-      signupLink.style.display = 'inline';
-    }
+    <div class="slide">
+      <img src="https://img.freepik.com/free-photo/assortment-different-groceries_23-2147695012.jpg">
+    </div>
 
-    // Logout
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('loggedUser');
-      showPopup('Logged out successfully!');
-      setTimeout(() => window.location.href = 'login.html', 1500);
-    });
-  </script>
+    <div class="slide">
+      <img src="https://img.freepik.com/free-photo/shopping-basket-full-vegetables_23-2148733494.jpg">
+    </div>
+
+  </div>
+
+  <!-- Arrows -->
+  <div class="slider-btn prev">❮</div>
+  <div class="slider-btn next">❯</div>
+
+  <!-- Dots -->
+  <div class="dots"></div>
+</section>
+
+
+
+
+
+<!-- ✅ TOOLBAR -->
+<div class="toolbar">
+  <div id="chips"></div>
+
+  <select id="sortBox">
+    <option value="default">Relevance</option>
+    <option value="low">Price Low → High</option>
+    <option value="high">Price High → Low</option>
+    <option value="az">Name A → Z</option>
+  </select>
+</div>
+
+<!-- ✅ PRODUCT GRID -->
+<section id="products-container" class="grid"></section>
+
+<script src="script.js"></script>
+
+<footer class="footer">
+  <p>© 2025 Manasa Provisions • Fresh • Fast • Friendly</p>
+  <p>Delivery available in your area • Call: 98765 43210</p>
+</footer>
 </body>
 </html>
